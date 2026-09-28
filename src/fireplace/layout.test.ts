@@ -95,10 +95,10 @@ describe('computeLayout', () => {
     expect(portrait.logBed.h).toBe(landscape.logBed.h)
   })
 
-  test('reaches the fire down into the pile so flames lick between logs', () => {
+  test('plants the flame base on the hearth so it does not float beside the logs', () => {
     const layout = computeLayout(275, 155)
     expect(layout.fire.h).toBeGreaterThan(layout.logBed.y)
-    expect(layout.fire.h).toBeLessThan(layout.ashBed.y)
+    expect(layout.fire.h).toBe(layout.ashBed.y)
   })
 
   test('survives a frame too small for a full pile', () => {
