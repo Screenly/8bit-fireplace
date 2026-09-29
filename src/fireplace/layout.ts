@@ -82,12 +82,14 @@ export function computeLayout(width: number, height: number): Layout {
     opening: { x: 0, y: 0, w: width, h: height },
     ashBed,
     logBed,
-    // The fire reaches down into the pile so flames lick up between the logs.
+    // The fire runs down to the ash bed so the flame base sits on the hearth
+    // beside the logs. The log overlay is drawn on top, so the pile still
+    // covers the source and flames lick up between the logs.
     fire: {
       x: 0,
       y: 0,
       w: width,
-      h: Math.max(4, logBed.y + Math.round(logBed.h * 0.45)),
+      h: Math.min(height, Math.max(4, ashBed.y)),
     },
   }
 }
