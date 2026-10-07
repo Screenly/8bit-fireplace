@@ -23,7 +23,7 @@
   "prettier": "./.prettierrc.json",
   "devDependencies": {
     "@screenly/edge-apps": "^26.8.0",
-    "typescript": "^7.0.2",
+    "typescript": "^6.0.3",
     "prettier": "^3.8.1",
     "@types/node": "^26.6.3",
     "npm-run-all2": "^9.0.3",
