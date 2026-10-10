@@ -57,7 +57,6 @@ export function packLayer(
   transparent = false,
 ): Uint8Array {
   const packed = new Uint8Array(colors.length)
-  const top = LIGHT_BANDS - 1
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const index = y * width + x
@@ -66,10 +65,15 @@ export function packLayer(
         packed[index] = SKIP_PIXEL
         continue
       }
-      const raw = field.at(x, y) + bayerAt(x, y)
-      const band = raw < 0 ? 0 : raw > top ? top : Math.floor(raw)
-      packed[index] = band * SCENE_COLORS + color
+      packed[index] = bandAt(field, x, y) * SCENE_COLORS + color
     }
   }
   return packed
+}
+
+/** The dithered light band a pixel falls in, from 0 to `LIGHT_BANDS - 1`. */
+export function bandAt(field: LightField, x: number, y: number): number {
+  const raw = field.at(x, y) + bayerAt(x, y)
+  const top = LIGHT_BANDS - 1
+  return raw < 0 ? 0 : raw > top ? top : Math.floor(raw)
 }

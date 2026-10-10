@@ -45,4 +45,30 @@ export class IndexedBitmap {
   vLine(x: number, y: number, h: number, color: number): void {
     this.fillRect(x, y, 1, h, color)
   }
+
+  /** A one-pixel Bresenham line, inclusive of both ends. */
+  line(x0: number, y0: number, x1: number, y1: number, color: number): void {
+    let x = Math.round(x0)
+    let y = Math.round(y0)
+    const tx = Math.round(x1)
+    const ty = Math.round(y1)
+    const dx = Math.abs(tx - x)
+    const dy = -Math.abs(ty - y)
+    const sx = x < tx ? 1 : -1
+    const sy = y < ty ? 1 : -1
+    let error = dx + dy
+    for (;;) {
+      this.set(x, y, color)
+      if (x === tx && y === ty) return
+      const twice = error * 2
+      if (twice >= dy) {
+        error += dy
+        x += sx
+      }
+      if (twice <= dx) {
+        error += dx
+        y += sy
+      }
+    }
+  }
 }

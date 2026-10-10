@@ -23,6 +23,7 @@ const VARIANTS = [
       flame_height: 'medium',
       pixel_size: 'classic',
       scene: 'hearth',
+      theme: 'standard',
     },
   },
   {
@@ -33,6 +34,7 @@ const VARIANTS = [
       flame_height: 'medium',
       pixel_size: 'classic',
       scene: 'hearth',
+      theme: 'standard',
     },
   },
   {
@@ -43,6 +45,7 @@ const VARIANTS = [
       flame_height: 'medium',
       pixel_size: 'classic',
       scene: 'hearth',
+      theme: 'standard',
     },
   },
   {
@@ -53,6 +56,7 @@ const VARIANTS = [
       flame_height: 'medium',
       pixel_size: 'classic',
       scene: 'hearth',
+      theme: 'standard',
     },
   },
   {
@@ -63,6 +67,7 @@ const VARIANTS = [
       flame_height: 'medium',
       pixel_size: 'classic',
       scene: 'inferno',
+      theme: 'standard',
     },
   },
   {
@@ -73,6 +78,7 @@ const VARIANTS = [
       flame_height: 'medium',
       pixel_size: 'classic',
       scene: 'hearth',
+      theme: 'standard',
     },
   },
   {
@@ -83,6 +89,7 @@ const VARIANTS = [
       flame_height: 'medium',
       pixel_size: 'chunky',
       scene: 'hearth',
+      theme: 'standard',
     },
   },
   {
@@ -93,6 +100,7 @@ const VARIANTS = [
       flame_height: 'medium',
       pixel_size: 'fine',
       scene: 'hearth',
+      theme: 'standard',
     },
   },
 ] as const

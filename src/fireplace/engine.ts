@@ -4,6 +4,7 @@
  * keeps it straightforward to exercise in unit tests.
  */
 import { FIRE_MAX, FireSim, heatToRamp } from './fire'
+import { HalloweenDecor } from './halloween'
 import type { Rect } from './layout'
 import { SKIP_PIXEL } from './lighting'
 import { buildLightTables, FLICKER_STEPS } from './palettes'
@@ -13,6 +14,7 @@ import { buildHearthScene, buildInfernoScene, type SceneData } from './scene'
 import { Sparks } from './sparks'
 
 export type SceneVariant = 'hearth' | 'inferno'
+export type Theme = 'standard' | 'halloween'
 
 export interface EngineConfig {
   width: number
@@ -21,7 +23,14 @@ export interface EngineConfig {
   /** Flame height as a fraction of the firebox. */
   reachFactor: number
   variant: SceneVariant
+  theme: Theme
   seed: number
+  /**
+   * Seeds the Halloween dressing separately from the room, so the pumpkins
+   * and webs can be rearranged on every load while the brickwork stays put.
+   * Defaults to `seed`.
+   */
+  decorSeed?: number
 }
 
 export class Engine {
@@ -35,6 +44,7 @@ export class Engine {
   private readonly lightTables: Uint32Array[]
   private readonly flameTable: Uint32Array
   private readonly heatTable: Uint32Array
+  private readonly decor: HalloweenDecor | null
 
   private flicker = 0.5
   private flickerTarget = 0.5
@@ -70,6 +80,16 @@ export class Engine {
     this.lightTables = buildLightTables(config.flame)
     this.flameTable = buildFlameTable(config.flame)
     this.heatTable = buildHeatTable(this.flameTable)
+    this.decor =
+      config.theme === 'halloween'
+        ? new HalloweenDecor(
+            this.scene.layout,
+            this.scene.light,
+            config.variant,
+            config.flame,
+            config.decorSeed ?? config.seed,
+          )
+        : null
   }
 
   /** Advances the simulation by one fixed tick. */
@@ -79,6 +99,7 @@ export class Engine {
     const energy = this.fire.energy()
     this.sparks.update(energy)
     this.updateFlicker(energy)
+    this.decor?.tick()
   }
 
   /** Composites the current state into `pixels` (length `width * height`). */
@@ -89,6 +110,7 @@ export class Engine {
     this.paintFire(pixels)
     this.paintOverlay(pixels, table)
     this.paintSparks(pixels)
+    this.decor?.paint(pixels, this.flickerIndex)
   }
 
   private updateFlicker(energy: number): void {
