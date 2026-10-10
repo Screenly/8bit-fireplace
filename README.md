@@ -34,15 +34,17 @@ each screen gets its own firebox but always looks the same after a restart.
 
 ## Configuration
 
-| Setting        | Description                                                     | Required | Default   |
-| -------------- | --------------------------------------------------------------- | -------- | --------- |
-| `crt_effect`   | Overlay CRT-style scanlines                                     | No       | `false`   |
-| `flame_color`  | `classic`, `azure`, `emerald` or `violet`                       | No       | `classic` |
-| `flame_height` | `low`, `medium` or `high`                                       | No       | `medium`  |
-| `pixel_size`   | `chunky`, `classic` or `fine`                                   | No       | `classic` |
-| `scene`        | `hearth` for the log fire, `inferno` for a full screen of flame | No       | `hearth`  |
-| `sentry_dsn`   | Sentry DSN for error reporting; leave empty to disable          | No       | _(empty)_ |
-| `theme`        | `auto`, `standard` or `halloween`                               | No       | `auto`    |
+| Setting        | Description                                                           | Required | Default   |
+| -------------- | --------------------------------------------------------------------- | -------- | --------- |
+| `crt_effect`   | Overlay CRT-style scanlines                                           | No       | `false`   |
+| `flame_color`  | `classic`, `azure`, `emerald` or `violet`                             | No       | `classic` |
+| `flame_height` | `low`, `medium` or `high`                                             | No       | `medium`  |
+| `music`        | `shuffle`, `haunted_hall`, `graveyard_waltz`, `creeping` or `toccata` | No       | `shuffle` |
+| `pixel_size`   | `chunky`, `classic` or `fine`                                         | No       | `classic` |
+| `scene`        | `hearth` for the log fire, `inferno` for a full screen of flame       | No       | `hearth`  |
+| `sentry_dsn`   | Sentry DSN for error reporting; leave empty to disable                | No       | _(empty)_ |
+| `sound`        | 8-bit background music with the Halloween theme                       | No       | `false`   |
+| `theme`        | `auto`, `standard` or `halloween`                                     | No       | `auto`    |
 
 With `theme` on `auto` the fireplace dresses up for Halloween through the
 whole of October, by the player's local clock, and goes back to standard on
@@ -61,6 +63,13 @@ brickwork still comes from the hostname, so the room itself stays the same),
 and the critters come in random sizes. Everything is lit by the fire the same
 way as the brickwork. The inferno scene has no hearth, so it gets the webs and
 critters, and the skeletons only stroll past.
+
+With `sound` on, the Halloween theme also plays 8-bit background music,
+synthesised in the browser so there are no audio files. `music` picks one of
+four tunes to loop, or `shuffle` to change tune about once a minute with a
+short pause in between. Sound is off by default, as most screens have no
+speakers. Some players only allow audio after a click, in which case the
+screen simply stays silent.
 
 An unrecognised value falls back to its default rather than blanking the screen.
 

@@ -9,6 +9,7 @@ import {
   signalReady,
 } from '@screenly/edge-apps'
 import { createStage, present, type Stage } from './fireplace/display'
+import { HalloweenAudio } from './halloween-audio'
 import {
   readSettings,
   resolveTheme,
@@ -31,6 +32,7 @@ function start(canvas: HTMLCanvasElement, settings: FireplaceSettings): void {
   // The brickwork is seeded from the hostname so a screen always shows the
   // same room, but the Halloween dressing is rearranged on every load. It is
   // picked once here, so a resize keeps the same arrangement.
+  const audio = settings.sound ? createAudio(settings.music) : null
   const options = { decorSeed: Math.floor(Math.random() * 0xffffffff) + 1 }
 
   // Paint the first frame synchronously, then signal ready. Waiting for
@@ -40,6 +42,14 @@ function start(canvas: HTMLCanvasElement, settings: FireplaceSettings): void {
   let stage: Stage = createStage(canvas, settings, viewport(), options)
   present(stage)
   signalReady()
+  syncAudio()
+
+  // Sound only plays with the Halloween theme, so it follows `auto` too.
+  function syncAudio(): void {
+    if (!audio) return
+    if (stage.theme === 'halloween') audio.start()
+    else audio.stop()
+  }
 
   let last = Date.now()
   let accumulator = 0
@@ -49,6 +59,7 @@ function start(canvas: HTMLCanvasElement, settings: FireplaceSettings): void {
     try {
       stage = createStage(canvas, settings, viewport(), options)
       accumulator = TICK_MS
+      syncAudio()
     } catch (error) {
       reportError(error, { source })
     }
@@ -96,6 +107,16 @@ function start(canvas: HTMLCanvasElement, settings: FireplaceSettings): void {
   window.addEventListener('resize', rebuild)
   window.addEventListener('orientationchange', rebuild)
   window.requestAnimationFrame(frame)
+}
+
+/** Sound is a nicety; a player without Web Audio still gets the picture. */
+function createAudio(music: string): HalloweenAudio | null {
+  try {
+    return new HalloweenAudio(music)
+  } catch (error) {
+    reportError(error, { source: 'audio' })
+    return null
+  }
 }
 
 function debounce(action: () => void, wait: number): () => void {

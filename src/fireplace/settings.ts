@@ -7,6 +7,7 @@
 import { getSettingWithDefault } from '@screenly/edge-apps'
 import { getHostname } from '@screenly/edge-apps/utils'
 import type { SceneVariant, Theme } from './engine'
+import { TRACKS } from '../halloween-score'
 import { FLAME_COLORS, type FlameColor } from './ramps'
 
 export type PixelSize = 'chunky' | 'classic' | 'fine'
@@ -17,6 +18,11 @@ export type ThemeSetting = 'auto' | Theme
 export const PIXEL_SIZES: readonly PixelSize[] = ['chunky', 'classic', 'fine']
 export const FLAME_HEIGHTS: readonly FlameHeight[] = ['low', 'medium', 'high']
 export const SCENE_VARIANTS: readonly SceneVariant[] = ['hearth', 'inferno']
+/** `shuffle`, or the id of one tune to loop. */
+export const MUSIC_CHOICES: readonly string[] = [
+  'shuffle',
+  ...TRACKS.map((track) => track.id),
+]
 export const THEME_SETTINGS: readonly ThemeSetting[] = [
   'auto',
   'standard',
@@ -44,6 +50,8 @@ export interface FireplaceSettings {
   variant: SceneVariant
   theme: ThemeSetting
   crt: boolean
+  sound: boolean
+  music: string
   seed: number
 }
 
@@ -108,6 +116,12 @@ export function readSettings(): FireplaceSettings {
       'auto',
     ),
     crt: getSettingWithDefault<boolean>('crt_effect', false),
+    sound: getSettingWithDefault<boolean>('sound', false),
+    music: pickChoice(
+      getSettingWithDefault<string>('music', 'shuffle'),
+      MUSIC_CHOICES,
+      'shuffle',
+    ),
     seed: seedFrom(safeHostname()),
   }
 }

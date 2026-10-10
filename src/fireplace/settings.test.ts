@@ -49,6 +49,7 @@ describe('readSettings', () => {
         pixel_size: 'chunky',
         scene: 'inferno',
         theme: 'halloween',
+        music: 'toccata',
       },
     )
     expect(readSettings()).toEqual({
@@ -58,6 +59,8 @@ describe('readSettings', () => {
       pixelSize: 'chunky',
       variant: 'inferno',
       theme: 'halloween',
+      sound: false,
+      music: 'toccata',
       seed: seedFrom('srly-lobby-01'),
     })
   })
@@ -71,6 +74,8 @@ describe('readSettings', () => {
     expect(settings.variant).toBe('hearth')
     expect(settings.crt).toBe(false)
     expect(settings.theme).toBe('auto')
+    expect(settings.sound).toBe(false)
+    expect(settings.music).toBe('shuffle')
   })
 
   test('ignores nonsense values instead of failing', () => {
@@ -81,9 +86,11 @@ describe('readSettings', () => {
         pixel_size: '',
         scene: 'volcano',
         theme: 'christmas',
+        music: 'jingle_bells',
       },
     )
     const settings = readSettings()
+    expect(settings.music).toBe('shuffle')
     expect(settings.theme).toBe('auto')
     expect(settings.flame).toBe('classic')
     expect(settings.pixelSize).toBe('classic')
