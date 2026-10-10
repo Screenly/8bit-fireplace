@@ -57,7 +57,9 @@ const VOICES: Record<Voice, VoiceSound> = {
 
 export class HalloweenAudio {
   private readonly context: AudioContext | OfflineAudioContext
-  private readonly music: GainNode
+  /** Replaced on every start, so notes queued before a stop stay silent. */
+  private music: GainNode
+  private stopped = false
   private readonly waves: Record<'thin' | 'reedy', PeriodicWave>
   private timer: ReturnType<typeof setInterval> | undefined
   private nextTime = 0
@@ -77,28 +79,48 @@ export class HalloweenAudio {
   constructor(track = 'shuffle', context?: AudioContext | OfflineAudioContext) {
     this.only = TRACKS.find((t) => t.id === track) ?? null
     this.context = context ?? new AudioContext()
-    this.music = this.context.createGain()
-    this.music.gain.value = 0.3
-    this.music.connect(this.context.destination)
+    this.music = this.output()
     this.waves = {
       thin: pulseWave(this.context, 0.125),
       reedy: pulseWave(this.context, 0.25),
     }
-    this.resumeOnGesture()
+    // An offline context runs its own lifecycle, and is never clicked.
+    if (!(this.context instanceof OfflineAudioContext)) this.resumeOnGesture()
   }
 
   /** Starts the music. Calling it again is harmless. */
   start(): void {
     if (this.timer !== undefined) return
+    // The old output was cut off by `stop`, along with anything queued on it.
+    if (this.stopped) this.music = this.output()
+    this.stopped = false
     this.nextTime = this.context.currentTime + 0.1
     this.cue(this.only ?? TRACKS[Math.floor(Math.random() * TRACKS.length)])
     this.timer = setInterval(() => this.schedule(), SCHEDULER_MS)
   }
 
+  /**
+   * Stops the music, including notes already queued a moment ahead or still
+   * ringing: their output fades out over a few milliseconds and is cut off.
+   */
   stop(): void {
     if (this.timer === undefined) return
     clearInterval(this.timer)
     this.timer = undefined
+    this.stopped = true
+    const old = this.music
+    const now = this.context.currentTime
+    old.gain.cancelScheduledValues(now)
+    old.gain.setValueAtTime(old.gain.value, now)
+    old.gain.linearRampToValueAtTime(0, now + 0.05)
+    setTimeout(() => old.disconnect(), 100)
+  }
+
+  private output(): GainNode {
+    const gain = this.context.createGain()
+    gain.gain.value = 0.3
+    gain.connect(this.context.destination)
+    return gain
   }
 
   /** Lines up a tune to play from the top for about `PLAY_SECONDS`. */

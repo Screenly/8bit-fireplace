@@ -98,8 +98,11 @@ export class Skeletons {
   private readonly skeletons: Skeleton[]
 
   private ticks = 0
-  /** The design taken last, so the one brought back is a different one. */
-  private stolen: Sprite | null = null
+  /**
+   * Every design taken since the hearth was last full, so whatever comes back
+   * is never one of them.
+   */
+  private readonly stolen = new Set<Sprite>()
   /** How many skeletons the spiders have carried off. */
   private snatched = 0
 
@@ -282,7 +285,7 @@ export class Skeletons {
     if (this.pumpkins.length + inbound.length >= this.fullCount) return null
     const occupied = [...this.pumpkins, ...inbound]
     const avoid = new Set<Sprite>(occupied.map((p) => p.design))
-    if (this.stolen) avoid.add(this.stolen)
+    for (const design of this.stolen) avoid.add(design)
     return pickPumpkin(this.spans, occupied, avoid, this.rng)
   }
 
@@ -310,6 +313,7 @@ export class Skeletons {
     if (sk.errand === 'return') {
       this.pumpkins.push(target)
       sk.carrying = null
+      if (this.pumpkins.length >= this.fullCount) this.stolen.clear()
       return
     }
     const index = this.pumpkins.indexOf(target)
@@ -319,7 +323,7 @@ export class Skeletons {
       return
     }
     this.pumpkins.splice(index, 1)
-    this.stolen = target.design
+    this.stolen.add(target.design)
     sk.carrying = target
     // And off back the way it came, sharpish.
     sk.vx = -sk.vx * FLEE_SPEEDUP

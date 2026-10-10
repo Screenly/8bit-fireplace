@@ -98,6 +98,24 @@ describe('Skeletons', () => {
     expect(brought?.design).not.toBe(taken?.design)
   })
 
+  test('never bring back any design stolen since the hearth was full', () => {
+    const rng = createRng(5)
+    const pumpkins = placePumpkins(SPANS, rng)
+    const skeletons = new Skeletons(SIZE, rng, pumpkins, SPANS)
+    // Two thieves, one big and one small, each away with a pumpkin.
+    const taken = pumpkins.splice(0, 2)
+    const internals = skeletons as unknown as {
+      stolen: Set<unknown>
+      replacement(): { design: unknown } | null
+    }
+    for (const p of taken) internals.stolen.add(p.design)
+    for (let i = 0; i < 50; i++) {
+      const back = internals.replacement()
+      expect(back).not.toBeNull()
+      for (const p of taken) expect(back?.design).not.toBe(p.design)
+    }
+  })
+
   test('only stroll when there is no hearth', () => {
     const skeletons = new Skeletons(SIZE, createRng(3), [], [])
     for (let i = 0; i < 30 * 60 * 10; i++) skeletons.tick()
