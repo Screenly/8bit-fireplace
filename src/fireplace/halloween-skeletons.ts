@@ -260,7 +260,9 @@ export class Skeletons {
       this.enter(sk, this.centre(sk.target) < this.width / 2, speed)
     } else {
       sk.errand = 'stroll'
-      if (sk.kind === 'small' && this.rng() < SNATCH_CHANCE) {
+      // No hearth (the inferno) means no ambush either: just a stroll.
+      const hearth = this.spans.length > 0
+      if (hearth && sk.kind === 'small' && this.rng() < SNATCH_CHANCE) {
         const x = Math.round(this.width * (0.3 + this.rng() * 0.4))
         const skullTop = this.floor - (WALK[0].h + 1) * sk.scale
         sk.snatch = new SpiderSnatch(x, skullTop)

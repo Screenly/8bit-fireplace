@@ -78,14 +78,16 @@ describe('Skeletons', () => {
     expect(brought?.design).not.toBe(taken?.design)
   })
 
-  test('only stroll when there are no pumpkins to take', () => {
+  test('only stroll when there is no hearth', () => {
     const skeletons = new Skeletons(SIZE, createRng(3), [], [])
-    for (let i = 0; i < 5000; i++) skeletons.tick()
+    for (let i = 0; i < 30 * 60 * 10; i++) skeletons.tick()
     expect(skeletons.onHearth).toHaveLength(0)
+    expect(skeletons.snatchCount).toBe(0)
   })
 
   test('small skeletons turn up often, and spiders take some of them', () => {
-    const skeletons = new Skeletons(SIZE, createRng(3), [], [])
+    const rng = createRng(3)
+    const skeletons = new Skeletons(SIZE, rng, placePumpkins(SPANS, rng), SPANS)
     const pixels: number[] = []
     for (let i = 0; i < 30 * 60 * 10; i++) {
       skeletons.tick()
