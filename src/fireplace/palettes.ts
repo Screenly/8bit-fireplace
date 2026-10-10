@@ -68,12 +68,26 @@ const BAND_STRENGTH = [0, 0.18, 0.42, 0.74]
  * pixel.
  */
 export function buildLightTables(flame: FlameColor): Uint32Array[] {
-  const glow = glowColor(flame)
-  const palette = paletteFor(flame)
+  return buildPaletteTables(
+    paletteFor(flame),
+    glowColor(flame),
+    GLOW_SENSITIVITY,
+  )
+}
+
+/**
+ * The same flicker tables for any 16-colour palette, so other layers drawn
+ * into the firebox pick up the firelight exactly as the brickwork does.
+ */
+export function buildPaletteTables(
+  palette: readonly string[],
+  glow: string,
+  sensitivity: Readonly<Record<number, number>>,
+): Uint32Array[] {
   const tables: Uint32Array[] = []
   for (let step = 0; step < FLICKER_STEPS; step++) {
     const flicker = 0.72 + (0.28 * step) / (FLICKER_STEPS - 1)
-    tables.push(buildLightTable(palette, glow, flicker))
+    tables.push(buildLightTable(palette, glow, flicker, sensitivity))
   }
   return tables
 }
@@ -94,11 +108,12 @@ function buildLightTable(
   palette: readonly string[],
   glow: string,
   flicker: number,
+  sensitivityOf: Readonly<Record<number, number>>,
 ): Uint32Array {
   const table = new Uint32Array(LIGHT_BANDS * SCENE_COLORS)
   for (let band = 0; band < LIGHT_BANDS; band++) {
     for (let color = 0; color < SCENE_COLORS; color++) {
-      const sensitivity = GLOW_SENSITIVITY[color] ?? 1
+      const sensitivity = sensitivityOf[color] ?? 1
       const amount = BAND_STRENGTH[band] * flicker * sensitivity
       table[band * SCENE_COLORS + color] = litColor(
         palette[color],

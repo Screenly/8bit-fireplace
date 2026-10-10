@@ -42,6 +42,24 @@ each screen gets its own firebox but always looks the same after a restart.
 | `pixel_size`   | `chunky`, `classic` or `fine`                                   | No       | `classic` |
 | `scene`        | `hearth` for the log fire, `inferno` for a full screen of flame | No       | `hearth`  |
 | `sentry_dsn`   | Sentry DSN for error reporting; leave empty to disable          | No       | _(empty)_ |
+| `theme`        | `auto`, `standard` or `halloween`                               | No       | `auto`    |
+
+With `theme` on `auto` the fireplace dresses up for Halloween through the
+whole of October, by the player's local clock, and goes back to standard on
+1 November. The app checks the date once a minute, so a screen that runs for
+weeks without a reload still changes over. The Halloween theme adds three jack-o'-lanterns with candle-lit faces on the
+hearth, cobwebs in the top corners, spiders on silk, bats and the odd ghost.
+Every so often a big skeleton walks in, grabs a pumpkin and runs off with it,
+and another turns up a few seconds later with a different one and puts it down
+somewhere new. Small skeletons scurry past on their own timer: about a third
+of them pinch a pumpkin too, and the rest have an even chance of being
+snatched by a big spider that drops from the top and hauls them away. The
+dangling spiders take turns, climbing off and being replaced by new ones. The
+pumpkin designs and the webs are rearranged on every load (the
+brickwork still comes from the hostname, so the room itself stays the same),
+and the critters come in random sizes. Everything is lit by the fire the same
+way as the brickwork. The inferno scene has no hearth, so it gets the webs and
+critters, and the skeletons only stroll past.
 
 An unrecognised value falls back to its default rather than blanking the screen.
 

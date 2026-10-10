@@ -16,7 +16,7 @@ settings:
       schema_version: 1
       properties:
         advanced: true
-        display_order: 5
+        display_order: 6
         help_text: Overlay CRT-style scanlines for a period-correct look.
         type: boolean
   display_errors:
@@ -28,7 +28,7 @@ settings:
       schema_version: 1
       properties:
         advanced: true
-        display_order: 6
+        display_order: 7
         help_text: For debugging purposes to display errors on the screen.
         type: boolean
   flame_color:
@@ -40,7 +40,7 @@ settings:
       schema_version: 1
       properties:
         type: select
-        display_order: 2
+        display_order: 3
         help_text: Colour of the fire.
         options:
           - label: Classic (orange)
@@ -60,7 +60,7 @@ settings:
       schema_version: 1
       properties:
         type: select
-        display_order: 3
+        display_order: 4
         help_text: How far the flames reach up the firebox.
         options:
           - label: Low
@@ -78,7 +78,7 @@ settings:
       schema_version: 1
       properties:
         type: select
-        display_order: 4
+        display_order: 5
         help_text: How chunky the pixels are.
         options:
           - label: Chunky (big blocky pixels)
@@ -103,6 +103,24 @@ settings:
             value: hearth
           - label: Inferno (full screen of flame)
             value: inferno
+  theme:
+    type: string
+    default_value: auto
+    title: Theme
+    optional: true
+    help_text:
+      schema_version: 1
+      properties:
+        type: select
+        display_order: 2
+        help_text: Seasonal dressing for the fireplace. Auto switches to Halloween through October.
+        options:
+          - label: Auto (follows the calendar)
+            value: auto
+          - label: Standard
+            value: standard
+          - label: Halloween
+            value: halloween
   sentry_dsn:
     type: secret
     title: Sentry DSN
@@ -112,6 +130,6 @@ settings:
       schema_version: 1
       properties:
         advanced: true
-        display_order: 7
+        display_order: 8
         help_text: Sentry DSN for reporting errors. Leave empty to disable.
         type: string

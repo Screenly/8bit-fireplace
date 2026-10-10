@@ -6,15 +6,22 @@
  */
 import { getSettingWithDefault } from '@screenly/edge-apps'
 import { getHostname } from '@screenly/edge-apps/utils'
-import type { SceneVariant } from './engine'
+import type { SceneVariant, Theme } from './engine'
 import { FLAME_COLORS, type FlameColor } from './ramps'
 
 export type PixelSize = 'chunky' | 'classic' | 'fine'
 export type FlameHeight = 'low' | 'medium' | 'high'
+/** `auto` follows the calendar; the others pin a theme all year round. */
+export type ThemeSetting = 'auto' | Theme
 
 export const PIXEL_SIZES: readonly PixelSize[] = ['chunky', 'classic', 'fine']
 export const FLAME_HEIGHTS: readonly FlameHeight[] = ['low', 'medium', 'high']
 export const SCENE_VARIANTS: readonly SceneVariant[] = ['hearth', 'inferno']
+export const THEME_SETTINGS: readonly ThemeSetting[] = [
+  'auto',
+  'standard',
+  'halloween',
+]
 
 /** How many virtual pixels the shorter edge of the screen is divided into. */
 export const TARGET_SHORT_SIDE: Record<PixelSize, number> = {
@@ -35,8 +42,18 @@ export interface FireplaceSettings {
   flameHeight: FlameHeight
   pixelSize: PixelSize
   variant: SceneVariant
+  theme: ThemeSetting
   crt: boolean
   seed: number
+}
+
+/**
+ * The theme to draw on a given day. `auto` dresses the hearth for Halloween
+ * through the whole of October, by the player's local clock.
+ */
+export function resolveTheme(setting: ThemeSetting, date: Date): Theme {
+  if (setting !== 'auto') return setting
+  return date.getMonth() === 9 ? 'halloween' : 'standard'
 }
 
 /** Falls back rather than throwing, so a bad setting never blanks a screen. */
@@ -84,6 +101,11 @@ export function readSettings(): FireplaceSettings {
       getSettingWithDefault<string>('scene', 'hearth'),
       SCENE_VARIANTS,
       'hearth',
+    ),
+    theme: pickChoice(
+      getSettingWithDefault<string>('theme', 'auto'),
+      THEME_SETTINGS,
+      'auto',
     ),
     crt: getSettingWithDefault<boolean>('crt_effect', false),
     seed: seedFrom(safeHostname()),

@@ -8,7 +8,7 @@
 import { IndexedBitmap } from './bitmap'
 import type { Layout, Rect } from './layout'
 import { computeLayout } from './layout'
-import { createLightField, packLayer } from './lighting'
+import { createLightField, packLayer, type LightField } from './lighting'
 import { drawAndirons, drawFirebox, drawLogs, logPileBounds } from './logs'
 import { SCENE } from './palettes'
 import type { Rng } from './prng'
@@ -31,6 +31,8 @@ export interface SceneData {
   sparkSpan: { x: number; w: number }
   /** How far an ember may travel before it is recycled. */
   sparkBounds: Rect
+  /** How exposed each pixel is to the fire, for anything drawn on top. */
+  light: LightField
   layout: Layout
 }
 
@@ -69,6 +71,7 @@ export function buildHearthScene(
     overlayBounds: logPileBounds(layout),
     sparkSpan: { x: layout.logBed.x, w: layout.logBed.w },
     sparkBounds: layout.opening,
+    light: field,
     layout,
   }
 }
@@ -103,6 +106,8 @@ export function buildInfernoScene(width: number, height: number): SceneData {
     overlayBounds: { x: 0, y: 0, w: 0, h: 0 },
     sparkSpan: { x: 0, w: width },
     sparkBounds: fire,
+    // A wall of flame lights everything in front of it about evenly.
+    light: { at: () => 1.5 },
     layout,
   }
 }

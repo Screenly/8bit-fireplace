@@ -10,6 +10,7 @@ const BASE: EngineConfig = {
   flame: 'classic',
   reachFactor: 0.7,
   variant: 'hearth',
+  theme: 'standard',
   seed: 42,
 }
 
@@ -130,6 +131,42 @@ describe('Engine', () => {
       engine.tick()
       engine.paint(pixels)
       expect(pixels.every((pixel) => pixel !== 0)).toBe(true)
+    }
+  })
+})
+
+describe('Halloween theme', () => {
+  test('dresses the hearth for Halloween without touching the fire', () => {
+    const standard = render().pixels
+    const halloween = render({ theme: 'halloween' }).pixels
+    expect(halloween.every((pixel) => pixel !== 0)).toBe(true)
+    expect(Array.from(halloween)).not.toEqual(Array.from(standard))
+    // The flames and embers come from their own random stream, so the
+    // bottom-centre of the fire is identical either way.
+    const row = Math.round(BASE.height * 0.7) * BASE.width
+    const mid = row + BASE.width / 2
+    expect(halloween[mid]).toBe(standard[mid])
+  })
+
+  test('keeps the Halloween critters inside any frame size', () => {
+    for (const variant of ['hearth', 'inferno'] as const) {
+      for (const [w, h] of [
+        [16, 16],
+        [96, 160],
+        [275, 155],
+      ]) {
+        const engine = new Engine({
+          ...BASE,
+          width: w,
+          height: h,
+          variant,
+          theme: 'halloween',
+        })
+        const pixels = new Uint32Array(w * h)
+        for (let i = 0; i < 900; i++) engine.tick()
+        engine.paint(pixels)
+        expect(pixels.every((pixel) => pixel !== 0)).toBe(true)
+      }
     }
   })
 })

@@ -6,10 +6,11 @@
  * square on 480x800 and on 4096x2160 alike, and means the per-frame cost
  * barely moves between them.
  */
-import { Engine } from './engine'
+import { Engine, type Theme } from './engine'
 import { computeScale, computeVirtualSize } from './layout'
 import {
   REACH_FACTOR,
+  resolveTheme,
   TARGET_SHORT_SIDE,
   type FireplaceSettings,
 } from './settings'
@@ -25,6 +26,8 @@ export interface Stage {
   frame: ImageData
   pixels: Uint32Array
   scale: number
+  /** The theme this stage was built with, after resolving `auto`. */
+  theme: Theme
 }
 
 /** Builds a stage sized for `viewport` and lays the canvas out over it. */
@@ -32,7 +35,9 @@ export function createStage(
   canvas: HTMLCanvasElement,
   settings: FireplaceSettings,
   viewport: Viewport,
+  options: { now?: Date; decorSeed?: number } = {},
 ): Stage {
+  const theme = resolveTheme(settings.theme, options.now ?? new Date())
   const scale = computeScale(
     viewport.width,
     viewport.height,
@@ -56,12 +61,15 @@ export function createStage(
       flame: settings.flame,
       reachFactor: REACH_FACTOR[settings.flameHeight],
       variant: settings.variant,
+      theme,
       seed: settings.seed,
+      decorSeed: options.decorSeed,
     }),
     context,
     frame,
     pixels: new Uint32Array(frame.data.buffer),
     scale,
+    theme,
   }
 }
 
