@@ -47,7 +47,8 @@ each screen gets its own firebox but always looks the same after a restart.
 With `theme` on `auto` the fireplace dresses up for Halloween through the
 whole of October, by the player's local clock, and goes back to standard on
 1 November. The app checks the date once a minute, so a screen that runs for
-weeks without a reload still changes over. The Halloween theme adds three jack-o'-lanterns with candle-lit faces on the
+weeks without a reload still changes over. The Halloween theme adds up to three jack-o'-lanterns (two on a narrow
+portrait screen) with candle-lit faces on the
 hearth, cobwebs in the top corners, spiders on silk, bats and the odd ghost.
 Every so often a big skeleton walks in, grabs a pumpkin and runs off with it,
 and another turns up a few seconds later with a different one and puts it down

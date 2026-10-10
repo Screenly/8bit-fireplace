@@ -106,9 +106,10 @@ export class Critters {
     for (const at of columns) {
       const spider = { home: Math.round(this.width * at) } as Spider
       this.respawn(spider)
-      // Already down at the start, and leaving at different times.
+      // Already down at the start; random lives keep them from leaving
+      // together.
       spider.drop = 1
-      spider.life = randRange(rng, 30 * 5, SPIDER_LIFE[1])
+      spider.life = randRange(rng, SPIDER_LIFE[0], SPIDER_LIFE[1])
       this.spiders.push(spider)
     }
 

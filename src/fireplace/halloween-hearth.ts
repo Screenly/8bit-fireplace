@@ -96,8 +96,9 @@ export function pickPumpkin(
 }
 
 /**
- * The opening arrangement: three pumpkins at random spots, one guaranteed on
- * each side of the pile when there is room for it.
+ * The opening arrangement: up to three pumpkins at random spots, one
+ * guaranteed on each side of the pile when there is room for it. A narrow
+ * portrait hearth only has room for one a side, so it gets two.
  */
 export function placePumpkins(spans: readonly Span[], rng: Rng): Pumpkin[] {
   const pumpkins: Pumpkin[] = []

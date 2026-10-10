@@ -1,5 +1,11 @@
 import { describe, expect, test } from 'bun:test'
-import { freeSpot, placePumpkins, type Span } from './halloween-hearth'
+import {
+  freeSpot,
+  hearthSpans,
+  placePumpkins,
+  type Span,
+} from './halloween-hearth'
+import { computeLayout } from './layout'
 import { Skeletons } from './halloween-skeletons'
 import { createRng } from './prng'
 
@@ -42,6 +48,20 @@ describe('hearth', () => {
       ),
     )
     expect(layouts.size).toBeGreaterThan(1)
+  })
+
+  test('fits three on a landscape hearth and two on a portrait one', () => {
+    // 1920x1080 and 1080x1920 at the default pixel size.
+    const landscape = hearthSpans(computeLayout(275, 155))
+    const portrait = hearthSpans(computeLayout(155, 275))
+    for (let seed = 1; seed < 20; seed++) {
+      expect(placePumpkins(landscape, createRng(seed))).toHaveLength(3)
+      const tall = placePumpkins(portrait, createRng(seed))
+      expect(tall).toHaveLength(2)
+      // One each side of the logs.
+      expect(tall[0].x).toBeLessThan(portrait[0].to)
+      expect(tall[1].x).toBeGreaterThanOrEqual(portrait[1].from)
+    }
   })
 
   test('reports no spot when nothing fits', () => {
